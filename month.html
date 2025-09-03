@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Monthsary babyqueh</title>
+  <style>
+    :root{
+      --bg:#fff0f6;
+      --accent:#ff4d6d;
+      --shadow: rgba(0,0,0,0.12);
+      --font: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background: radial-gradient(circle at 10% 10%, #fff8fb 0%, var(--bg) 45%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      color:#333;
+    }
+
+    .card{
+      width:420px;
+      height:280px;
+      background:white;
+      border-radius:20px;
+      box-shadow: 0 8px 30px var(--shadow);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition: transform 0.6s ease, box-shadow 0.6s ease;
+      overflow:hidden;
+      position:relative;
+      padding:20px;
+    }
+    .card:hover{ transform: scale(1.03); box-shadow: 0 10px 36px rgba(0,0,0,0.15); }
+    .card.opened{ transform:none; cursor:default; }
+
+    .title{ margin:0; font-size:26px; color:var(--accent); transition: opacity 0.35s ease; }
+
+    .prompt{ margin:10px 0 0; font-size:14px; color:#555; text-align:center; transition: opacity 0.35s ease, transform 0.35s ease; }
+    .card.opened .prompt{ opacity:0; transform:translateY(6px); pointer-events:none; }
+
+    .message{
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; gap:12px;
+      align-items:center; justify-content:center;
+      padding:28px; font-size:16px; line-height:1.6; color:#444; text-align:center;
+      opacity:0; transform:scale(0.96); transition: opacity 0.6s ease, transform 0.6s ease;
+      background: rgba(255,255,255,0.98); /* nearly opaque so underlying text won't show */
+      z-index:2;
+    }
+    .message.active{ opacity:1; transform:scale(1); }
+
+    .heart{ font-size:28px; animation: pulse 1.5s infinite; }
+    @keyframes pulse{ 0%{ transform:scale(1); opacity:0.9 } 50%{ transform:scale(1.2); opacity:1 } 100%{ transform:scale(1); opacity:0.9 } }
+
+    /* small close link */
+    .close{ position:absolute; top:12px; right:14px; font-size:13px; color:#888; cursor:pointer; }
+    .close:hover{ color:#444 }
+
+    @media (max-width:520px){ .card{ width:92vw; height:auto; padding:18px } .message{ font-size:15px } }
+  </style>
+</head>
+<body>
+  <div class="card" id="card" role="button" aria-pressed="false">
+    <h1 class="title" id="title">Happy Monthsary ❤️</h1>
+    <p class="prompt" id="prompt">Click this card baby :></p>
+
+    <div class="message" id="message" aria-hidden="true">
+      <div class="close" id="close">✕</div>
+      <p> Hello mahal happy monthsary malapit na tayo mag 2 years yey! dami na natin agad pinagdaanan but im glad we still hanging on, I love you mahal — Di ko man madalas sabihin sayo to but I mean it. Sana kayanin natin ang mga challenges na binabato satin. I love youuuuu! </p>
+      <div class="heart">❤️</div>
+    </div>
+  </div>
+
+  <script>
+    const card = document.getElementById('card');
+    const message = document.getElementById('message');
+    const title = document.getElementById('title');
+    const prompt = document.getElementById('prompt');
+    const close = document.getElementById('close');
+    let opened = false;
+
+    function openCard(){
+      if(opened) return;
+      opened = true;
+      card.classList.add('opened');
+      card.setAttribute('aria-pressed','true');
+
+      // fade title + prompt quickly so they don't show through
+      title.style.opacity = '0';
+      prompt.style.opacity = '0';
+
+      // after prompt fades remove it from flow and show message
+      setTimeout(()=>{
+        prompt.style.display = 'none';
+        message.setAttribute('aria-hidden','false');
+        message.classList.add('active');
+      }, 360);
+    }
+
+    function closeMessage(e){
+      e.stopPropagation();
+      if(!opened) return;
+      message.classList.remove('active');
+      setTimeout(()=>{
+        message.setAttribute('aria-hidden','true');
+        card.classList.remove('opened');
+        card.setAttribute('aria-pressed','false');
+        // restore title + prompt
+        title.style.opacity = '';
+        prompt.style.display = '';
+        prompt.style.opacity = '';
+        opened = false;
+      }, 300);
+    }
+
+    card.addEventListener('click', openCard);
+    close.addEventListener('click', closeMessage);
+
+    // allow Esc to close
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMessage(e); });
+  </script>
+</body>
+</html>
